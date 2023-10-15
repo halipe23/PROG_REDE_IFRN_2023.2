@@ -1,1 +1,51 @@
+import random
 
+def gerar_lista(quantidade, valor_minimo:int=1, valor_maximo:int=10000):
+    lista = []
+    for _ in range(quantidade):
+        valor = random.randint(valor_minimo, valor_maximo)
+        lista.append(valor)
+    
+    return True, lista
+
+def salvar_lista(nome_lista, nome_arquivo):
+    try:
+        with open(nome_arquivo, 'w') as arquivo:
+            for item in nome_lista:
+                arquivo.write(str(item) + '\n')
+        return True
+    except Exception as e:
+        print(f"Erro ao salvar a lista no arquivo: {e}")
+        return False
+
+def valor_inteiro(mensagem):
+    while True:
+        try:
+            valor = int(input(mensagem))
+            return valor
+        except ValueError:
+            print("Valor não é um inteiro válido. Tente novamente.")
+
+try:
+    valor1 = valor_inteiro('Quantidade: ')
+    valor2 = valor_inteiro('Valor mínimo: ')
+    valor3 = valor_inteiro('Valor máximo: ')
+
+    quantidade = max(valor1, 0)
+    valor_minimo = min(valor2, valor3)
+    valor_maximo = max(valor2, valor3)
+
+    boolsucesso, lista = gerar_lista(quantidade, valor_minimo, valor_maximo)
+
+    if boolsucesso:
+        nome_arquivo = input("Informe o nome do arquivo para salvar a lista: ")
+        if salvar_lista(lista, nome_arquivo):
+            print(f"Lista salva com sucesso no arquivo {nome_arquivo}")
+        else:
+            print("Erro ao salvar a lista no arquivo.")
+    else:
+        print("Erro ao gerar a lista.")
+except KeyboardInterrupt:
+    print("\nPrograma interrompido pelo usuário.")
+except Exception as e:
+    print(f"Ocorreu um erro inesperado: {e}")
