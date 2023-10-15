@@ -1,0 +1,112 @@
+import random
+import logging
+
+# Configurar o logger
+logging.basicConfig(filename='programa.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def obter_valor_inteiro(mensagem):
+    while True:
+        try:
+            valor = int(input(mensagem))
+            return valor
+        except ValueError:
+            print("Valor não é um inteiro válido. Tente novamente.")
+
+def gerar_lista(quantidade, valor_minimo, valor_maximo):
+    lista = []
+    for _ in range(quantidade):
+        valor = random.randint(valor_minimo, valor_maximo)
+        lista.append(valor)
+    
+    return True, lista
+
+def salvar_lista(nome_lista, nome_arquivo):
+    try:
+        with open(nome_arquivo, 'w') as arquivo:
+            for item in nome_lista:
+                arquivo.write(str(item) + '\n')
+        return True
+    except Exception as e:
+        logging.error(f"Erro ao salvar a lista no arquivo: {e}")
+        return False
+
+def ler_arquivo(nome_arquivo):
+    try:
+        with open(nome_arquivo, 'r') as arquivo:
+            lista = [int(line.strip()) for line in arquivo]
+        return True, lista
+    except FileNotFoundError:
+        print(f"Arquivo '{nome_arquivo}' não encontrado.")
+        return False, None
+    except Exception as e:
+        logging.error(f"Erro ao ler o arquivo: {e}")
+        return False, None
+
+def ordena_bubble(lista):
+    n = len(lista)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if lista[j] > lista[j+1]:
+                lista[j], lista[j+1] = lista[j+1], lista[j]
+    return True, lista
+
+def ordena_insertion(lista):
+    for i in range(1, len(lista)):
+        chave = lista[i]
+        j = i-1
+        while j >= 0 and chave < lista[j]:
+            lista[j+1] = lista[j]
+            j -= 1
+        lista[j+1] = chave
+    return True, lista
+
+def ordena_selection(lista):
+    for i in range(len(lista)):
+        min_index = i
+        for j in range(i+1, len(lista)):
+            if lista[j] < lista[min_index]:
+                min_index = j
+        lista[i], lista[min_index] = lista[min_index], lista[i]
+    return True, lista
+
+def ordena_quick(lista):
+    if len(lista) <= 1:
+        return True, lista
+    else:
+        pivot = lista[0]
+        left = []
+        right = []
+        for item in lista[1:]:
+            if item < pivot:
+                left.append(item)
+            else:
+                right.append(item)
+        left_sorted, left = ordena_quick(left)
+        right_sorted, right = ordena_quick(right)
+        return True, left + [pivot] + right
+
+try:
+    nome_arquivo = input("Informe o nome do arquivo: ")
+
+    boolsucesso, lista_lida = ler_arquivo(nome_arquivo)
+
+    if boolsucesso:
+        print("Lista lida com sucesso:", lista_lida)
+        metodo_ordena = input("Informe o método de ordenação (BUBBLE, INSERTION, SELECTION, ou QUICK): ").upper()
+
+        if metodo_ordena in ["BUBBLE", "INSERTION", "SELECTION", "QUICK"]:
+            ordena_func = globals()[f"ordena_{metodo_ordena.lower()}"]
+            boolsucesso, lista_ordenada = ordena_func(lista_lida.copy())
+
+            if boolsucesso:
+                print(f"Lista ordenada usando o método {metodo_ordena}: {lista_ordenada}")
+            else:
+                print(f"Erro ao ordenar a lista usando o método {metodo_ordena}.")
+        else:
+            print("Método de ordenação inválido.")
+    else:
+        print("Erro ao ler o arquivo.")
+except KeyboardInterrupt:
+    print("\nPrograma interrompido pelo usuário.")
+except Exception as e:
+    print(f"Ocorreu um erro inesperado: {e}")
