@@ -1,0 +1,24 @@
+Projeto de Servidor de Agentes com Controle via Bot no Telegram
+
+Descrição:
+Este projeto consiste em um servidor que gerencia agentes e permite interagir com eles via Telegram. 
+Os agentes estão conectados ao servidor e podem fornecer informações como IP, nome do host, usuário logado e tempo online. 
+O bot no Telegram permite aos usuários enviar comandos para obter essas informações dos agentes.
+
+Funcionalidades:
+Lista de agentes online
+Comando para listar agentes conectados: 
+Informações disponíveis: IP, nome do host, usuário logado e tempo online
+Integração com Telegram
+Bot para interagir com os agentes
+Comandos específicos para recuperar informações dos agentes
+
+Tecnologias Utilizadas:
+Python
+Telegram API
+(Outras bibliotecas nativas do python)
+
+Exemplo de Comandos do Bot:
+list agt -on - Lista os agentes que estão online
+*Outros comandos específicos para solicitar informações dos agentes*
+Estrutura do Projeto: 
