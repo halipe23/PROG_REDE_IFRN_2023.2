@@ -19,7 +19,6 @@
   Comandos específicos para recuperar informações dos agentes
 
 # Comandos do BOT no Telegram:
-
  Implementação de comandos via bot no Telegram para:
   - Informações do hardware onde o servidor está sendo executado.
 
@@ -38,6 +37,6 @@
   ====================== /listclient =====================
 
 # Tecnologias Utilizadas:
-Python
-Telegram API
-(Outras bibliotecas nativas do python)
+- Python
+- Telegram API
+- (Outras bibliotecas nativas do python)
