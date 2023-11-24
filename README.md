@@ -22,14 +22,19 @@
 
  Implementação de comandos via bot no Telegram para:
   - Informações do hardware onde o servidor está sendo executado.
+
   ====================== /info-h =======================
   - Lista de programas instalados no servidor.
+
   ====================== /info-p =======================
   - Histórico de navegação em diferentes navegadores.
+
   ===================== /historic ======================
   - Informações detalhadas do usuário logado.
+
   ====================== /info-u =======================
   - Lista dos agentes online com informações básicas.
+
   ====================== /listclient =====================
 
 # Tecnologias Utilizadas:
