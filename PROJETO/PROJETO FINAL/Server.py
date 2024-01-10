@@ -3,20 +3,19 @@ import threading
 
 def handle_client(client_socket):
     while True:
-        command = input("Digite um comando para enviar ao cliente ('exit' para sair): ")
-
+        command = client_socket.recv(1024).decode('utf-8')
         if command == 'exit':
-            client_socket.send(command.encode('utf-8'))
+            client_socket.send('exit'.encode('utf-8'))
             break
 
-        client_socket.send(command.encode('utf-8'))
+        client_socket.send('comando não executado'.encode('utf-8'))
         response = client_socket.recv(4096)
         print("Resposta do cliente:", response.decode('utf-8'))
 
     client_socket.close()
 
 def start_server():
-    host = '0.0.0.0'
+    host = '127.0.0.1'
     port = 5757
 
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
