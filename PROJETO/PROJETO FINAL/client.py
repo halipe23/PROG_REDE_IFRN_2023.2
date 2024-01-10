@@ -1,11 +1,14 @@
 import socket
 import subprocess
 import os
-import platform
+from def_win import *
+from def_lin import *
 from browser_history.browsers import Chrome, Edge, Firefox
 
+SO = platform.system()
+
 def connect_to_server():
-    server_host = '0.0.0.0'
+    server_host = '127.0.0.1'
     server_port = 5757  
     
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,226 +73,60 @@ def criar_respostaL(comando):
         return 'comando inválido'
 
 
-# LINUX
+if SO == 'Linux':
+    from def_lin import *
 
-def informacoes_hardwareL():
-    informacoes = infohardwareL()
-    return informacoes 
+    def informacoes_hardwareL():
+        informacoes = infohardwareL()
+        return informacoes 
 
-def lista_programas_instaladosL():
-    informacoes = proglinux()
-    return informacoes
-
-def historico_navegacaoL():
-    return "Histórico de navegação em diferentes navegadores."
-
-def informacoes_usuario_logadoL():
-    informacoes = infouserL()
-    return informacoes
-
-def lista_agentes_onlineL():
-    return "Lista dos agentes online com informações básicas."
-
-
-# WINDOWS
-def informacoes_hardwareW():
-    return infohardwareW()
-
-def lista_programas_instaladosW():
-    return progwindows()
-
-def historico_navegacaoW():
-    return 'históricos de navegação'
-
-def informacoes_usuario_logadoW():
-    return infouserW()
-
-def lista_agentes_onlineW():
-    return "Lista dos agentes online com informações básicas."
-
-
-def infohardwareW():
-    def memoria_windows():
-        try:
-            resultado = subprocess.run(['systeminfo'], capture_output=True, text=True)
-            systeminfo = resultado.stdout
-            memoria_total = [linha for linha in systeminfo.split('\n') if 'Memória física total:' in linha]
-            total = memoria_total[0].split(':')[-1].strip()
-            memoria_dis = [linha for linha in systeminfo.split('\n') if 'Memória física disponível:' in linha]
-            disponivel = memoria_dis[0].split(':')[-1].strip()
-
-            final = f"Memória Total: {total}\nMemória Disponível: {disponivel}"
-            return final
-        except:
-            return "Não foi possível receber a informação de memória"
-
-    def disco_windows():
-        try:
-            resultado = subprocess.run(['wmic', 'logicaldisk', 'get', 'size,freespace,caption'], capture_output=True, text=True)
-            linhas = resultado.stdout.strip().split('\n')
-            dados = linhas[2].split()
-            vazio = int(dados[1]) / (1024 ** 3)
-            total = int(dados[2]) / (1024 ** 3)
-
-            informacoes_discos = f"Espaço livre em disco: {vazio:.2f} GB\nEspaço total em disco: {total:.2f} GB"
-            return informacoes_discos
-        except:
-            return "Não foi possível receber a informação de disco"
-
-    try:
-        sistema_operacional = platform.system()
-        processador = platform.processor()
-        arquitetura = platform.architecture()
-    except:
-        return 'Não foi possível obter as informações de Hardware'
-
-    informacoes = (
-        f"\n----- INFORMAÇÕES DE CPU -----\n"
-        f"Sistema Operacional: {sistema_operacional}\n"
-        f"Processador: {processador}\n"
-        f"Arquitetura: {arquitetura[0]} {arquitetura[1]}\n"
-        f"\n----- INFORMAÇÕES DE DISCO -----\n{disco_windows()}\n"
-        f"\n----- INFORMAÇÕES DE MEMÓRIA -----\n{memoria_windows()}"
-    )
-
-    return informacoes
-
-def infouserW():
-    def gruposusuariowin():
-        try:
-            resultado = subprocess.run(['net', 'user', os.getlogin()], capture_output=True, text=True, encoding='cp437')
-            linhas = resultado.stdout.strip().splitlines()
-
-            imprimir = False
-            inicio = 'Associações de Grupo Local'
-            fim = 'Comando concluído com êxito.'
-            informações = ""
-
-            for linha in linhas:
-                if fim in linha:
-                    break
-                if inicio in linha:
-                    imprimir = True
-                if imprimir:
-                    linha = linha.replace('Associações', 'Associações')
-                    informações += linha + '\n'
-            return informações
-        except:
-            return 'Não foi possível obter as informações do Agente'
-
-    def usersid():
-        try:    
-            sid = None
-            out = subprocess.Popen("wmic useraccount get name, sid", stdout=subprocess.PIPE)
-            out = out.communicate()[0].decode().replace("\r", "")
-            for line in out.split("\n"):
-                if line.startswith(os.getlogin()):        
-                    sid = line.replace(os.getlogin(), "").strip()
-                    return sid
-                
-        except Exception as e:
-            print(f'Erro: {e}')
-            return 'Não foi possível obter as informações do SID do Agente'
-    
-    usuario = os.getlogin()
-    informacoes_usuario = f'''
-    ---------------- INFORMAÇÕES DE USUÁRIO ----------------
-
-    O Diretório Inicial do Usuário {usuario} é: '{os.environ['USERPROFILE']}'
-    O SID do usuário {usuario} é: {usersid()}
-    Os grupos que o usuário {usuario} está associado são:
-    {gruposusuariowin()}
-    Nome do Executável do usuário {usuario} é: {os.path.basename(os.environ['ComSpec'])}
-    '''
-    return informacoes_usuario
-
-def progwindows():
-    try:
-        resultado = subprocess.run(['wmic', 'product', 'get', 'name'], capture_output=True, text=True)
-        linhas = resultado.stdout.splitlines()
-        informacoes = "\n---------- INFORMAÇÕES DE PROGRAMAS INSTALADOS ----------\n\n"
-        for linha in linhas[2:-3]:
-            informacoes += linha + "\n"
-
+    def lista_programas_instaladosL():
+        informacoes = proglinux()
         return informacoes
-    except:
-        return f'Não foi possível obter as informações de programas instalados:'
 
-def infohardwareL():
-    def memoria_linux():
-        try:
-            cabeçalho = subprocess.run('free | grep "total"', capture_output=True, text=True, shell=True)
-            memoria = subprocess.run('free -m | grep "Mem:"', capture_output=True, text=True, shell=True)
+    def historico_navegacaoL(navegador):
+        return "Histórico de navegação em diferentes navegadores."
 
-            informacoes = f"\nInformações detalhadas sobre a memória física:\n{cabeçalho.stdout}\n{memoria.stdout}"
-
-            return informacoes
-        except:
-            return f"Erro ao obter informações de memória"
-
-    def disco_linux():
-        try:
-            cabeçalho = subprocess.run('df -h | grep -i "File"', shell=True, capture_output=True, text=True)
-            discos = ["/dev/sda", "/dev/root", "/dev/mapper", "/dev/nvme0n1p1"]
-
-            for disco in discos:
-                try:
-                    armazenamento = subprocess.run(f'df -h | grep -i "{disco}"', capture_output=True, text=True, shell=True)
-                    break
-                except: continue 
-
-            informacoes = f"\nInformações detalhadas sobre o disco:\n\n{cabeçalho.stdout}{armazenamento.stdout}"
-
-            return informacoes
-        except:
-            return f"Erro ao obter informações de disco"
-
-    try:
-        sistema_operacional = platform.system()
-        processador = platform.processor()
-        arquitetura = platform.architecture()
-    except:
-        return 'Não foi possível obter as informações de Hardware'
-
-    informacoes = (
-        f"\n----- INFORMAÇÕES DE CPU -----\n"
-        f"Sistema Operacional: {sistema_operacional}\n"
-        f"Processador: {processador}\n"
-        f"Arquitetura: {arquitetura[0]} {arquitetura[1]}\n"
-        f"\n----- INFORMAÇÕES DE DISCO -----\n{disco_linux()}\n"
-        f"\n----- INFORMAÇÕES DE MEMÓRIA -----\n{memoria_linux()}"
-    )
-
-    return informacoes
-
-def infouserL():
-    def grupos_linux():
-        try:
-            usuario = os.getlogin()
-            resultado = subprocess.run(['groups', usuario], capture_output=True, text=True, shell=True)
-            grupos = resultado.stdout.strip().split()
-            secundarios = ('\n'.join(grupos[3:]))
-
-            saida = f"\n--- Grupo Principal ---\n{grupos[2]}\n\n--- Grupos Secundários ---\n{secundarios}"
-            return saida
-        except:
-            return 'Não foi possível obter as informações de grupos do usuário'
-
-    return (f"Usuário: {os.getlogin()}\n"
-        f"Diretório Inicial: {os.path.expanduser('~')}\n"
-        f"Identificação de usuário: UID = {os.getuid()}\n"
-        f"Os grupos do usuário são: {grupos_linux()}\n"
-        f"\nO Shell padrão do Usuário é: {os.environ['SHELL']}")
-
-def proglinux():
-    try:
-        resultado = subprocess.run(['apt', 'list', '--installed'], capture_output=True, text=True, shell=True)
-        linhas = resultado.stdout.splitlines()
-
-        informacoes = "\n---------- INFORMAÇÕES DE PROGRAMAS INSTALADOS ----------\n\n"
-        for linha in linhas[2:-3]:
-            informacoes += linha + "\n"
-
+    def informacoes_usuario_logadoL():
+        informacoes = ipagentes()
         return informacoes
+
+    def lista_agentes_onlineL():
+        return "Lista dos agentes online com informações básicas."
+
+elif SO == 'Windows':
+    from def_win import *
+
+    def informacoes_hardwareW():
+        return infohardwareW()
+
+    def lista_programas_instaladosW():
+        return progwindows()
+
+    def historico_navegacaoW():
+        return 'históricos de navegação'
+
+    def informacoes_usuario_logadoW():
+        return ipagentes()
+
+    def lista_agentes_onlineW():
+        return "Lista dos agentes online com informações básicas."
+
+
+def ipagentes():
+    try:
+        informacoes_agente = f'''
+        ---- INFORMAÇÕES DO AGENTE ----
+
+        Nome do host: {socket.gethostname()}
+        Usuário logado: {os.getlogin()}
+        IP do Host: {socket.gethostbyname(socket.gethostname())}
+        '''
+        return informacoes_agente
     except:
-        return f'Não foi possível obter as informações de programas instalados:'
+        return 'Não foi possível obter as informações do Agente'
+
+    client.close()
+
+if __name__ == "__main__":
+    connect_to_server()
