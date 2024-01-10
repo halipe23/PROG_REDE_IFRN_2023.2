@@ -5,7 +5,7 @@ KEY_API = "6849345429:AAFDRM9v0KkNKjlLH59epOcwvcCntyH1fZU"
 bot = telebot.TeleBot(KEY_API)
 
 def send_command_to_server(command):
-    server_host = '0.0.0.0'      
+    server_host = '127.0.0.1'      
     server_port = 5757  
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
